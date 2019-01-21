@@ -2,7 +2,6 @@ from bs4 import BeautifulSoup
 import requests
 from codecs import open
 from re import sub
-import sqlite3
 import pandas as pd
 import pandas.io.sql as psql
 
@@ -93,14 +92,10 @@ weekly_data = []
 for i in range(0, 20):
     weekly_data.append(create_week_dataframe(OWL_URL_BASE + str(i + 1)))
 
-conn = sqlite3.connect('owl.db')
-c = conn.cursor()
-
 i = 0
 for week in weekly_data:
     i += 1
     week[week.columns[3:]] = week[week.columns[3:]].apply(pd.to_numeric)
     week['Week'] = week['Week'].apply(pd.to_numeric)
-    week.to_sql('week' + str(i), con=conn, if_exists='replace')
     week.to_csv('Week' + str(i) + '.csv')
-
+    week.to_sql('Week' + str(i))
